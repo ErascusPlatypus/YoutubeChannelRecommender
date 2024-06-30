@@ -1,0 +1,79 @@
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 20px;
+    color: #333;
+}
+
+.container {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+}
+
+h1 {
+    font-size: 26px;
+    color: #444;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.recommendations {
+    margin-bottom: 20px;
+}
+
+.recommendations p {
+    margin: 10px 0;
+    padding: 15px;
+    background: #eef;
+    border-radius: 8px;
+    transition: background 0.3s ease;
+}
+
+.recommendations p:hover {
+    background: #dde;
+}
+
+.recommendations a {
+    color: #0073e6;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.recommendations a:hover {
+    text-decoration: underline;
+}
+
+.manual-search {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+#channel-input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-right: 10px;
+    box-sizing: border-box;
+}
+
+#recommend-btn {
+    padding: 10px 20px;
+    border: none;
+    background: #0073e6;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+#recommend-btn:hover {
+    background: #005bb5;
+}
