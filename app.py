@@ -7,20 +7,15 @@ import requests
 from bs4 import BeautifulSoup
 from pytube import YouTube
 
-# Initialize the Flask app
 app = Flask(__name__)
 CORS(app)
 
-# Configure logging
 logging.basicConfig(level=logging.DEBUG)
 
-# Load the model, vectorizer, and dataset
 model = joblib.load('new_nearest_neighbors.joblib')
 vectorizer = joblib.load('new_tfidf_vectorizer.joblib')
-
 grouped_lists = pd.read_csv('new_grouped_lists.csv')
 grouped_lists['Transcript'] = grouped_lists['Transcript'].fillna('')
-
 text_counts = vectorizer.fit_transform(grouped_lists['Transcript'])
 indices = pd.Series(grouped_lists.index, index=grouped_lists['Channel'])
 
