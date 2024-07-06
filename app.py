@@ -3,65 +3,118 @@ from flask_cors import CORS
 import pandas as pd
 import joblib
 import logging
-import requests
-from bs4 import BeautifulSoup
-from pytube import YouTube
+from pytube import YouTube, exceptions
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+import scrape_code as scrape
+from api_manager import api_key_manager 
 
 app = Flask(__name__)
 CORS(app)
 
 logging.basicConfig(level=logging.DEBUG)
 
-model = joblib.load('new_nearest_neighbors.joblib')
-vectorizer = joblib.load('new_tfidf_vectorizer.joblib')
-grouped_lists = pd.read_csv('new_grouped_lists.csv')
+model = joblib.load('final_nearest_neighbors.joblib')
+vectorizer = joblib.load('final_tfidf_vectorizer.joblib')
+
+grouped_lists = pd.read_csv('final_grouped_lists.csv')
 grouped_lists['Transcript'] = grouped_lists['Transcript'].fillna('')
-text_counts = vectorizer.fit_transform(grouped_lists['Transcript'])
+
+text_counts = vectorizer.transform(grouped_lists['Transcript'])
 indices = pd.Series(grouped_lists.index, index=grouped_lists['Channel'])
 
-def get_channel_name(url):
-    ch = YouTube(url)
-    return ch.author
+def build_youtube_client():
+    api_key = api_key_manager.get_api_key()
+    if not api_key:
+        logging.error("API key is missing")
+        raise ValueError("API key is missing")
+    return build('youtube', 'v3', developerKey=api_key)
 
-def get_similar_channels(channel_name):
+def get_channel_id(url):
     try:
-        channel_name = channel_name.replace(" ", "-")
-        url = f"https://similarchannels.com/c/{channel_name}"
-        response = requests.get(url)
-        
-        if response.status_code != 200:
-            print(f"Failed to retrieve the page. Status code: {response.status_code}")
-            return []
-        
-        soup = BeautifulSoup(response.content, 'html.parser')
-        channel_list = soup.select('#channel_list .l-row.grid .l-info a h5.l-title')
-        
-        if not channel_list:
-            logging.error(f"Channel '{channel_name}' not found in the dataset.")
-            return jsonify({"error": f"'{channel_name}' not found in the dataset."}), 404
-        
-        channel_titles = [{'channel': title.get_text(strip=True), 'distance': 1.0} for title in channel_list]
-        print(channel_titles)
-        return channel_titles[:5]
-    
-    except requests.exceptions.RequestException as e:
-        print(f"Error during requests: {e}")
-        return []
-    
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        return []
+        ch = YouTube(url)
+        return ch.channel_id
+    except exceptions.RegexMatchError as e:
+        logging.error(f"RegexMatchError: {e}")
+        raise ValueError(f"Invalid YouTube URL: {url}")
+
+def get_channel_name(url):
+    try:
+        ch = YouTube(url)
+        return ch.author
+    except exceptions.RegexMatchError as e:
+        logging.error(f"RegexMatchError: {e}")
+        raise ValueError(f"Invalid YouTube URL: {url}")
+
+def get_profile_pic_from_video_id(video_id):
+    youtube = build_youtube_client()
+    retries = 0
+    while retries < 5:
+        try:
+            video_response = youtube.videos().list(
+                part="snippet",
+                id=video_id
+            ).execute()
+            break
+        except HttpError as e:
+            if e.resp.status == 403 and 'quotaExceeded' in e.content.decode():
+                logging.warning("Quota exceeded for current API key. Switching to next key.")
+                youtube = build_youtube_client()
+                retries += 1
+            else:
+                raise e
+
+    if not video_response['items']:
+        logging.error(f"No details found for the video with ID {video_id}")
+        return None
+
+    channel_id = video_response['items'][0]['snippet']['channelId']
+    return get_profile_pic_direct(channel_id)
+
+def get_profile_pic_direct(channel_id):
+    youtube = build_youtube_client()
+    retries = 0
+    while retries < 5:
+        try:
+            channel_response = youtube.channels().list(
+                part="snippet",
+                id=channel_id
+            ).execute()
+            break
+        except HttpError as e:
+            if e.resp.status == 403 and 'quotaExceeded' in e.content.decode():
+                logging.warning("Quota exceeded for current API key. Switching to next key.")
+                youtube = build_youtube_client()
+                retries += 1
+            else:
+                raise e
+
+    if not channel_response['items']:
+        logging.error(f"No details found for the channel with ID {channel_id}")
+        return None
+
+    profile_picture_url = channel_response['items'][0]['snippet']['thumbnails']['default']['url']
+    return profile_picture_url
 
 @app.route('/recommend', methods=['POST'])
 def recommend():
     logging.debug("Received a request for recommendations.")
-    try:
-        data = request.json
-        logging.debug(f"Request data: {data}")
-        channel_name = data.get('channel')
-    except Exception as e:
-        logging.error(f"Error parsing request data: {e}")
+    data = request.get_json()
+    if not data:
+        logging.error("Invalid request data: No data provided.")
         return jsonify({"error": "Invalid request data"}), 400
+    
+    channel_name = data.get('channel')
+    channel_url = data.get('url')
+    if not channel_url:
+        logging.error("Channel URL is required but not provided.")
+        return jsonify({"error": "Channel URL is required"}), 400
+
+    try:
+        channel_id = get_channel_id(channel_url)
+    except ValueError as e:
+        logging.error(f"Error getting channel ID: {e}")
+        return jsonify({"error": str(e)}), 400
 
     if not channel_name:
         logging.error("Channel name is required but not provided.")
@@ -70,20 +123,31 @@ def recommend():
     logging.debug(f"Searching for channel: {channel_name}")
 
     if channel_name not in indices:
-        recommendations = get_similar_channels(channel_name)
+        logging.debug(f'\n{channel_name} is not present in Dataset. Going to scrape code\n')
+        recommendations = scrape.get_similar_channels(channel_name, channel_id)
     else:
+        logging.debug(f'{channel_name} present in dataset. Fetching recommendations.......\n')
         idx = indices[channel_name]
         distances, neighbor_indices = model.kneighbors(text_counts.getrow(idx), n_neighbors=6)
-        names_similar = pd.Series(neighbor_indices.flatten()).map(grouped_lists.reset_index()['Channel'])
-
         recommendations = []
+
         for i in range(1, len(distances.flatten())):
-            print(names_similar[i], end=' , ')
+            similar_channel = grouped_lists.iloc[neighbor_indices.flatten()[i]]
+            profile_pic = get_profile_pic_from_video_id(similar_channel['Id'])
+            channel_id = get_channel_id(f"https://www.youtube.com/watch?v={similar_channel['Id']}")
+            channel_link = f"https://www.youtube.com/channel/{channel_id}"
+
             recommendations.append({
-                "channel": names_similar[i],
-                "distance": distances.flatten()[i]
+                "channel": similar_channel['Channel'],
+                "distance": distances.flatten()[i],
+                "profile": profile_pic,
+                "link": channel_link
             })
         logging.debug(f"Recommendations: {recommendations}")
+
+    if not recommendations:
+        logging.warning("No recommendations found.")
+        return jsonify({"error": "No recommendations found"}), 404
 
     return jsonify({
         "channel": channel_name,
@@ -101,6 +165,6 @@ def get_channel():
         return jsonify({"channel": channel_name})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
+    
 if __name__ == '__main__':
     app.run(debug=True)
