@@ -5,7 +5,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
         chrome.storage.local.set({ youtubeTab: tab.url }, () => {
             console.log('YouTube URL stored:', tab.url);
 
-            fetch('http://127.0.0.1:5000/get_channel', {
+            fetch('https://youtubechannelrecommender.onrender.com/get_channel', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -18,7 +18,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
                     const channelName = data.channel;
                     console.log('Channel Name:', channelName);
 
-                    return fetch('http://127.0.0.1:5000/recommend', {
+                    return fetch('https://youtubechannelrecommender.onrender.com/recommend', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
