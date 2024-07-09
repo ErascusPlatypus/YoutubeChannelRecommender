@@ -5,38 +5,36 @@ document.addEventListener('DOMContentLoaded', function() {
         const recommendationsDiv = document.getElementById('recommendations');
         recommendationsDiv.innerHTML = ''; // Clear previous recommendations
 
-        if (recommendations.error) {
-            recommendationsDiv.textContent = `Error: ${recommendations.error}`;
-        } else if (recommendations.data && recommendations.data.recommendations) {
-            console.log("Processing recommendations:", recommendations.data.recommendations);
-            recommendations.data.recommendations.forEach(rec => {
-                console.log("Processing recommendation:", rec);
-                const recElement = document.createElement('div');
-                recElement.classList.add('recommendation-item');
-
-                const recLink = document.createElement('a');
-                const recImg = document.createElement('img');
-                const recText = document.createElement('div');
-
-                recLink.href = rec.link; // Ensure this is the correct field for the URL
-                recLink.target = "_blank";
-                recLink.rel = "noopener noreferrer"; // Security measure
-
-                recImg.src = rec.profile;
-                recImg.alt = `${rec.channel} profile image`;
-                recImg.classList.add('profile-img');
-
-                recText.textContent = rec.channel;
-                recText.classList.add('channel-name');
-
-                recLink.appendChild(recImg);
-                recLink.appendChild(recText);
-                recElement.appendChild(recLink);
-                recommendationsDiv.appendChild(recElement);
-            });
-        } else {
+        // Check if recommendations data is available
+        if (!recommendations || !recommendations.recommendations) {
             recommendationsDiv.textContent = "No recommendations found.";
+            return;
         }
+
+        recommendations.recommendations.forEach(rec => {
+            const recElement = document.createElement('div');
+            recElement.classList.add('recommendation-item');
+
+            const recLink = document.createElement('a');
+            const recImg = document.createElement('img');
+            const recText = document.createElement('div');
+
+            recLink.href = rec.link; // Ensure this is the correct field for the URL
+            recLink.target = "_blank";
+            recLink.rel = "noopener noreferrer"; // Security measure
+
+            recImg.src = rec.profile;
+            recImg.alt = `${rec.channel} profile image`;
+            recImg.classList.add('profile-img');
+
+            recText.textContent = rec.channel;
+            recText.classList.add('channel-name');
+
+            recLink.appendChild(recImg);
+            recLink.appendChild(recText);
+            recElement.appendChild(recLink);
+            recommendationsDiv.appendChild(recElement);
+        });
     }
 
     // Add event listener for manual search
@@ -54,7 +52,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 body: JSON.stringify({ url: channelUrl })
             })
             .then(response => {
-                console.log("Response from get_channel:", response);
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
@@ -65,6 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (data.error) {
                     console.error('Error fetching channel name:', data.error);
                     document.getElementById('recommendations').textContent = `Error fetching channel name: ${data.error}`;
+                    throw new Error(data.error);
                 } else {
                     const channelName = data.channel;
                     console.log('Channel name:', channelName);
@@ -80,7 +78,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             })
             .then(response => {
-                console.log("Response from recommend:", response);
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
@@ -92,7 +89,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     console.error('Error fetching recommendations:', data.error);
                     document.getElementById('recommendations').textContent = `Error fetching recommendations: ${data.error}`;
                 } else {
-                    console.log('Recommendations received:', data);
                     displayRecommendations(data);
                 }
             })
