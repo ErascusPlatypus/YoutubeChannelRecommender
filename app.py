@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template 
 from flask_cors import CORS
 import pandas as pd
 import joblib
@@ -109,7 +109,7 @@ def recommend():
     if not channel_url:
         logging.error("Channel URL is required but not provided.")
         return jsonify({"error": "Channel URL is required"}), 400
-
+ 
     try:
         channel_id = get_channel_id(channel_url)
     except ValueError as e:
@@ -166,5 +166,14 @@ def get_channel():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
+
+@app.route('/')
+def home():
+    logging.info('Home page accessed')
+    return render_template('index.html')
+
+
 if __name__ == '__main__':
     app.run(debug=True)
+
+
