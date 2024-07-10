@@ -1,452 +1,458 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>YouTube Channel Recommender</title>
-    <style>
-      body {
-        font-family: "Arial", sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: #f4f4f4;
-        color: #333;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YouTube Channel Recommender</title>
+  <style>
+    body {
+      font-family: "Arial", sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+      color: #333;
+    }
 
-      header {
-        background-color: #ff0000;
-        color: white;
-        padding: 50px 20px;
-        text-align: center;
-      }
+    header {
+      background-color: #ff0000;
+      color: white;
+      padding: 50px 20px;
+      text-align: center;
+    }
 
-      header .container {
-        max-width: 1200px;
-        margin: 0 auto;
-      }
+    header .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
 
-      header h1 {
-        font-size: 3em;
-        margin-bottom: 20px;
-      }
+    header h1 {
+      font-size: 3em;
+      margin-bottom: 20px;
+    }
 
-      header p {
-        font-size: 1.2em;
-        margin-bottom: 20px;
-      }
+    header p {
+      font-size: 1.2em;
+      margin-bottom: 20px;
+    }
 
-      header .cta-button {
-        background-color: #fff;
-        color: #ff0000;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        font-size: 1.2em;
-        text-decoration: none;
-        transition: background-color 0.3s;
-      }
+    header .cta-button {
+      background-color: #fff;
+      color: #ff0000;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      font-size: 1.2em;
+      text-decoration: none;
+      transition: background-color 0.3s;
+    }
 
-      header .cta-button:hover {
-        background-color: #e0e0e0;
-      }
+    header .cta-button:hover {
+      background-color: #e0e0e0;
+    }
 
-      main .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 20px;
-      }
+    main .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
 
-      .features {
-        background-color: #fff;
-        padding: 50px 20px;
-        text-align: center;
-      }
+    .features {
+      background-color: #fff;
+      padding: 50px 20px;
+      text-align: center;
+    }
 
-      .features h2 {
-        font-size: 2.5em;
-        margin-bottom: 20px;
-      }
+    .features h2 {
+      font-size: 2.5em;
+      margin-bottom: 20px;
+    }
 
-      .features .feature-list {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-around;
-      }
+    .features .feature-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+    }
 
-      .features .feature-item {
-        width: 45%;
-        margin-bottom: 20px;
-      }
+    .features .feature-item {
+      width: 45%;
+      margin-bottom: 20px;
+    }
 
-      .features .feature-item h3 {
-        font-size: 1.5em;
-        margin-bottom: 10px;
-      }
+    .features .feature-item h3 {
+      font-size: 1.5em;
+      margin-bottom: 10px;
+    }
 
-      .how-it-works {
-        background-color: #e0e0e0;
-        padding: 50px 20px;
-        text-align: center;
-      }
+    .how-it-works {
+      background-color: #e0e0e0;
+      padding: 50px 20px;
+      text-align: center;
+    }
 
-      .how-it-works h2 {
-        font-size: 2.5em;
-        margin-bottom: 20px;
-      }
+    .how-it-works h2 {
+      font-size: 2.5em;
+      margin-bottom: 20px;
+    }
 
-      .how-it-works p {
-        font-size: 1.2em;
-        max-width: 800px;
-        margin: 0 auto;
-      }
+    .how-it-works p {
+      font-size: 1.2em;
+      max-width: 800px;
+      margin: 0 auto;
+    }
 
-      .demo {
-        background-color: #fff;
-        padding: 50px 20px;
-        text-align: center;
-      }
+    .demo {
+      background-color: #fff;
+      padding: 50px 20px;
+      text-align: center;
+    }
 
-      .demo h2 {
-        font-size: 2.5em;
-        margin-bottom: 20px;
-      }
+    .demo h2 {
+      font-size: 2.5em;
+      margin-bottom: 20px;
+    }
 
-      .demo-content {
-        max-width: 800px;
-        margin: 0 auto;
-      }
+    .demo-content {
+      max-width: 800px;
+      margin: 0 auto;
+    }
 
-      .demo-content .recommendations {
-        margin-top: 20px;
-        padding: 10px;
-        background-color: #f4f4f4;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        width: 100%;
-        max-width: 600px;
-        margin: 0 auto;
-      }
+    .recommendations {
+      margin-top: 20px;
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      display: none; /* Hide initially */
+    }
 
-      .demo-content .manual-search {
-        margin-top: 20px;
-      }
+    .recommendations.visible {
+      display: block;
+      padding: 10px;
+      background-color: #f4f4f4;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
 
-      .demo-content #channel-input {
-        padding: 10px;
-        font-size: 1em;
-        width: 60%;
-        max-width: 500px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-      }
+    .manual-search {
+      margin-top: 20px;
+    }
 
-      .demo-content #recommend-btn {
-        padding: 10px 20px;
-        font-size: 1em;
-        background-color: #ff0000;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-left: 10px;
-        transition: background-color 0.3s;
-      }
+    #channel-input {
+      padding: 10px;
+      font-size: 1em;
+      width: 60%;
+      max-width: 500px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
 
-      .demo-content #recommend-btn:hover {
-        background-color: #cc0000;
-      }
+    #recommend-btn {
+      padding: 10px 20px;
+      font-size: 1em;
+      background-color: #ff0000;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-left: 10px;
+      transition: background-color 0.3s;
+    }
 
-      .recommendation-item {
-        display: flex;
-        align-items: center;
-        margin: 10px 0;
-        padding: 10px;
-        background: #eef;
-        border-radius: 6px;
-        transition: background 0.3s ease;
-      }
+    #recommend-btn:hover {
+      background-color: #cc0000;
+    }
 
-      .recommendation-item:hover {
-        background: #dde;
-      }
+    .recommendation-item {
+      display: flex;
+      align-items: center;
+      margin: 10px 0;
+      padding: 10px;
+      background: #fff;
+      border-radius: 6px;
+      transition: background 0.3s ease;
+      border: 1px solid #ddd; /* Matching the website's color scheme */
+    }
 
-      .recommendation-item a {
-        display: flex;
-        align-items: center;
-        text-decoration: none;
-        color: inherit;
-      }
+    .recommendation-item:hover {
+      background: #f9f9f9; /* Matching the website's color scheme */
+    }
 
-      .profile-img {
-        width: 50px;
-        height: 50px;
-        margin-right: 10px;
-        border-radius: 50%;
-      }
+    .recommendation-item a {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      color: inherit;
+    }
 
-      .channel-name {
-        font-size: 16px;
-        font-weight: bold;
-      }
+    .profile-img {
+      width: 50px;
+      height: 50px;
+      margin-right: 10px;
+      border-radius: 50%;
+    }
 
-      .get-started {
-        background-color: #ff0000;
-        color: white;
-        padding: 50px 20px;
-        text-align: center;
-      }
+    .channel-name {
+      font-size: 16px;
+      font-weight: bold;
+    }
 
-      .get-started h2 {
-        font-size: 2.5em;
-        margin-bottom: 20px;
-      }
+    .get-started {
+      background-color: #ff0000;
+      color: white;
+      padding: 50px 20px;
+      text-align: center;
+    }
 
-      .get-started .cta-button {
-        background-color: #fff;
-        color: #ff0000;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        font-size: 1.2em;
-        text-decoration: none;
-        transition: background-color 0.3s;
-      }
+    .get-started h2 {
+      font-size: 2.5em;
+      margin-bottom: 20px;
+    }
 
-      .get-started .cta-button:hover {
-        background-color: #e0e0e0;
-      }
+    .get-started .cta-button {
+      background-color: #fff;
+      color: #ff0000;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      font-size: 1.2em;
+      text-decoration: none;
+      transition: background-color 0.3s;
+    }
 
-      footer {
-        background-color: #333;
-        color: white;
-        text-align: center;
-        padding: 20px;
-      }
+    .get-started .cta-button:hover {
+      background-color: #e0e0e0;
+    }
 
-      footer p {
-        margin: 0;
-      }
-    </style>
-  </head>
-  <body>
-    <header>
+    footer {
+      background-color: #333;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+
+    footer p {
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>YouTube Channel Recommender</h1>
+      <p>
+        Discover new YouTube channels based on your interests and
+        automatically get recommendations.
+      </p>
+      <a
+        href="https://addons.mozilla.org/en-US/firefox/addon/youtube-recommender/"
+        class="cta-button"
+        >Get the Extension</a
+      >
+    </div>
+  </header>
+  <main>
+    <section class="features">
       <div class="container">
-        <h1>YouTube Channel Recommender</h1>
+        <h2>Features</h2>
+        <div class="feature-list">
+          <div class="feature-item">
+            <h3>Automatic Recommendations</h3>
+            <p>
+              Detects open YouTube URLs and provides channel recommendations
+              based on your interests.
+            </p>
+          </div>
+          <div class="feature-item">
+            <h3>Manual Search</h3>
+            <p>
+              Enter any YouTube video URL to get channel recommendations
+              instantly.
+            </p>
+          </div>
+          <div class="feature-item">
+            <h3>Intuitive Interface</h3>
+            <p>
+              Easy-to-use interface that helps you find new channels with just
+              a click.
+            </p>
+          </div>
+          <div class="feature-item">
+            <h3>Seamless Integration</h3>
+            <p>
+              Integrates with your browser to enhance your YouTube experience
+              with personalized recommendations.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="how-it-works">
+      <div class="container">
+        <h2>How It Works</h2>
         <p>
-          Discover new YouTube channels based on your interests and
-          automatically get recommendations.
+          Install the YouTube Channel Recommender extension. It will
+          automatically detect when a YouTube video tab is open and extract
+          the channel name to provide personalized recommendations. You can
+          also manually enter a YouTube URL to get recommendations instantly.
         </p>
+      </div>
+    </section>
+    <section class="demo">
+      <div class="container">
+        <h2>Try the Demo</h2>
+        <div class="demo-content">
+          <p>
+            Enter a YouTube video URL and click "Recommend" to see how the
+            recommender works.
+          </p>
+          <div id="recommendations" class="recommendations">
+          </div>
+          <div class="manual-search">
+            <input
+              type="text"
+              id="channel-input"
+              placeholder="Enter YouTube video URL"
+            />
+            <button id="recommend-btn">Recommend</button>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="get-started">
+      <div class="container">
+        <h2>Get Started</h2>
         <a
           href="https://addons.mozilla.org/en-US/firefox/addon/youtube-recommender/"
           class="cta-button"
-          >Get the Extension</a
+          >Download Now</a
         >
       </div>
-    </header>
-    <main>
-      <section class="features">
-        <div class="container">
-          <h2>Features</h2>
-          <div class="feature-list">
-            <div class="feature-item">
-              <h3>Automatic Recommendations</h3>
-              <p>
-                Detects open YouTube URLs and provides channel recommendations
-                based on your interests.
-              </p>
-            </div>
-            <div class="feature-item">
-              <h3>Manual Search</h3>
-              <p>
-                Enter any YouTube video URL to get channel recommendations
-                instantly.
-              </p>
-            </div>
-            <div class="feature-item">
-              <h3>Intuitive Interface</h3>
-              <p>
-                Easy-to-use interface that helps you find new channels with just
-                a click.
-              </p>
-            </div>
-            <div class="feature-item">
-              <h3>Seamless Integration</h3>
-              <p>
-                Integrates with your browser to enhance your YouTube experience
-                with personalized recommendations.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-      <section class="how-it-works">
-        <div class="container">
-          <h2>How It Works</h2>
-          <p>
-            Install the YouTube Channel Recommender extension. It will
-            automatically detect when a YouTube video tab is open and extract
-            the channel name to provide personalized recommendations. You can
-            also manually enter a YouTube URL to get recommendations instantly.
-          </p>
-        </div>
-      </section>
-      <section class="demo">
-        <div class="container">
-          <h2>Try the Demo</h2>
-          <div class="demo-content">
-            <h3>Demo Interface</h3>
-            <p>
-              Enter a YouTube video URL and click "Recommend" to see how the
-              recommender works.
-            </p>
-            <div id="recommendations" class="recommendations">
-              No recommendations found.
-            </div>
-            <div class="manual-search">
-              <input
-                type="text"
-                id="channel-input"
-                placeholder="Enter YouTube video URL"
-              />
-              <button id="recommend-btn">Recommend</button>
-            </div>
-          </div>
-        </div>
-      </section>
-      <section class="get-started">
-        <div class="container">
-          <h2>Get Started</h2>
-          <a
-            href="https://addons.mozilla.org/en-US/firefox/addon/youtube-recommender/"
-            class="cta-button"
-            >Download Now</a
-          >
-        </div>
-      </section>
-    </main>
-    <footer>
-      <div class="container">
-        <p>&copy; 2024 YouTube Channel Recommender. All rights reserved.</p>
-      </div>
-    </footer>
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        function displayRecommendations(recommendations) {
-          console.log("Received recommendations for display:", recommendations);
-          const recommendationsDiv = document.getElementById("recommendations");
-          recommendationsDiv.innerHTML = "";
-          if (!recommendations || !recommendations.recommendations) {
-            recommendationsDiv.textContent = "No recommendations found.";
-            return;
-          }
-
-          recommendations.recommendations.forEach((rec) => {
-            const recElement = document.createElement("div");
-            recElement.classList.add("recommendation-item");
-
-            const recLink = document.createElement("a");
-            const recImg = document.createElement("img");
-            const recText = document.createElement("div");
-
-            recLink.href = rec.link;
-            recLink.target = "_blank";
-            recLink.rel = "noopener noreferrer";
-
-            recImg.src = rec.profile;
-            recImg.alt = `${rec.channel} profile image`;
-            recImg.classList.add("profile-img");
-
-            recText.textContent = rec.channel;
-            recText.classList.add("channel-name");
-
-            recLink.appendChild(recImg);
-            recLink.appendChild(recText);
-            recElement.appendChild(recLink);
-            recommendationsDiv.appendChild(recElement);
-          });
+    </section>
+  </main>
+  <footer>
+    <div class="container">
+      <p>&copy; 2024 YouTube Channel Recommender. All rights reserved.</p>
+    </div>
+  </footer>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      function displayRecommendations(recommendations) {
+        console.log("Received recommendations for display:", recommendations);
+        const recommendationsDiv = document.getElementById("recommendations");
+        recommendationsDiv.innerHTML = "";
+        if (!recommendations || !recommendations.recommendations) {
+          recommendationsDiv.textContent = "No recommendations found.";
+          return;
         }
 
-        document
-          .getElementById("recommend-btn")
-          .addEventListener("click", function () {
-            const channelUrl = document
-              .getElementById("channel-input")
-              .value.trim();
-            console.log("Channel URL:", channelUrl);
+        recommendations.recommendations.forEach((rec) => {
+          const recElement = document.createElement("div");
+          recElement.classList.add("recommendation-item");
 
-            if (channelUrl) {
-              fetch(
-                "https://youtubechannelrecommender.onrender.com/get_channel",
-                {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify({ url: channelUrl }),
+          const recLink = document.createElement("a");
+          const recImg = document.createElement("img");
+          const recText = document.createElement("div");
+
+          recLink.href = rec.link;
+          recLink.target = "_blank";
+          recLink.rel = "noopener noreferrer";
+
+          recImg.src = rec.profile;
+          recImg.alt = `${rec.channel} profile image`;
+          recImg.classList.add("profile-img");
+
+          recText.textContent = rec.channel;
+          recText.classList.add("channel-name");
+
+          recLink.appendChild(recImg);
+          recLink.appendChild(recText);
+          recElement.appendChild(recLink);
+          recommendationsDiv.appendChild(recElement);
+        });
+
+        recommendationsDiv.classList.add("visible");
+      }
+
+      document
+        .getElementById("recommend-btn")
+        .addEventListener("click", function () {
+          const channelUrl = document
+            .getElementById("channel-input")
+            .value.trim();
+          console.log("Channel URL:", channelUrl);
+
+          if (channelUrl) {
+            fetch(
+              "https://youtubechannelrecommender.onrender.com/get_channel",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ url: channelUrl }),
+              }
+            )
+              .then((response) => {
+                if (!response.ok) {
+                  throw new Error(`HTTP error! Status: ${response.status}`);
                 }
-              )
-                .then((response) => {
-                  if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                  }
-                  return response.json();
-                })
-                .then((data) => {
-                  console.log("Data from get_channel:", data);
-                  if (data.error) {
-                    console.error("Error fetching channel name:", data.error);
-                    document.getElementById(
-                      "recommendations"
-                    ).textContent = `Error fetching channel name: ${data.error}`;
-                    throw new Error(data.error);
-                  } else {
-                    const channelName = data.channel;
-                    console.log("Channel name:", channelName);
-
-                    return fetch(
-                      "https://youtubechannelrecommender.onrender.com/recommend",
-                      {
-                        method: "POST",
-                        headers: {
-                          "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify({
-                          channel: channelName,
-                          url: channelUrl,
-                        }),
-                      }
-                    );
-                  }
-                })
-                .then((response) => {
-                  if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                  }
-                  return response.json();
-                })
-                .then((data) => {
-                  console.log("Data from recommend:", data);
-                  if (data.error) {
-                    console.error(
-                      "Error fetching recommendations:",
-                      data.error
-                    );
-                    document.getElementById(
-                      "recommendations"
-                    ).textContent = `Error fetching recommendations: ${data.error}`;
-                  } else {
-                    displayRecommendations(data);
-                  }
-                })
-                .catch((error) => {
-                  console.error("Fetch error:", error);
+                return response.json();
+              })
+              .then((data) => {
+                console.log("Data from get_channel:", data);
+                if (data.error) {
+                  console.error("Error fetching channel name:", data.error);
                   document.getElementById(
                     "recommendations"
-                  ).textContent = `Fetch error: ${error.message}`;
-                });
-            }
-          });
-      });
-    </script>
-  </body>
+                  ).textContent = `Error fetching channel name: ${data.error}`;
+                  throw new Error(data.error);
+                } else {
+                  const channelName = data.channel;
+                  console.log("Channel name:", channelName);
+
+                  return fetch(
+                    "https://youtubechannelrecommender.onrender.com/recommend",
+                    {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                      },
+                      body: JSON.stringify({
+                        channel: channelName,
+                        url: channelUrl,
+                      }),
+                    }
+                  );
+                }
+              })
+              .then((response) => {
+                if (!response.ok) {
+                  throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+              })
+              .then((data) => {
+                console.log("Data from recommend:", data);
+                if (data.error) {
+                  console.error(
+                    "Error fetching recommendations:",
+                    data.error
+                  );
+                  document.getElementById(
+                    "recommendations"
+                  ).textContent = `Error fetching recommendations: ${data.error}`;
+                } else {
+                  displayRecommendations(data);
+                }
+              })
+              .catch((error) => {
+                console.error("Fetch error:", error);
+                document.getElementById(
+                  "recommendations"
+                ).textContent = `Fetch error: ${error.message}`;
+              });
+          }
+        });
+    });
+  </script>
+</body>
 </html>
