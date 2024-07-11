@@ -2,7 +2,7 @@
 
 ## Project Description
 
-The Youtube Channel Recommender is a web extension designed to enhance your YouTube browsing experience by providing personalized channel recommendations. Utilizing a combination of web scraping and a K-Nearest Neighbors (KNN) model, this tool helps users discover new channels that align with their interests.
+The Youtube Channel Recommender is a web extension designed to enhance your YouTube browsing experience by providing personalized channel recommendations. Utilizing a combination of the YouTube Data API, web scraping and a K-Nearest Neighbors (KNN) model, this tool helps users discover new channels that align with their interests.
 
 ### Key Features
 
@@ -16,9 +16,11 @@ The Youtube Channel Recommender is a web extension designed to enhance your YouT
    - The extension will then generate and display a list of recommended channels similar to the entered channel.
 
 ### Technical Details
-
+- **YouTube Data API**
+     - Uses the API to find recommendations if it is not found in the dataset or upon web scraping.
+      
 - **Web Scraping:**
-  - The extension scrapes relevant data from YouTube to gather information about channels.
+  - The extension scrapes relevant data from similarchannels.com to recommend similar channels
   
 - **KNN Model:**
   - A pre-trained KNN model (`new_nearest_neighbors.joblib`) is used to find similar channels based on the data collected.
